@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affordability Checker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom Gradient Background */
+    .gradient-bg {
+      background: linear-gradient(135deg, #3b82f6, #9333ea);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header Section -->
+  <header class="gradient-bg text-white p-6 shadow-md">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-3xl font-bold">Affordability Checker</h1>
+      <p class="mt-2 text-lg">Smart tools to calculate if you can afford your dream items!</p>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 mt-6">
+    <!-- Category Selector -->
+    <div class="mb-6">
+      <label for="category" class="block text-lg font-medium text-gray-700">Select a Category:</label>
+      <select id="category" class="w-full mt-2 p-3 border border-gray-300 rounded-lg">
+        <option value="car">Car</option>
+        <option value="house">House</option>
+        <option value="mobile">Mobile</option>
+        <option value="bike">Bike</option>
+        <option value="computer">Computer</option>
+        <option value="furniture">Furniture</option>
+        <option value="vacation">Vacation</option>
+        <option value="education">Education</option>
+        <option value="wedding">Wedding</option>
+        <option value="gadget">Gadget</option>
+      </select>
+    </div>
+
+    <!-- Affordability Form -->
+    <section>
+      <h2 id="category-title" class="text-2xl font-bold text-gray-800 mb-4">Car Affordability Checker</h2>
+      <p id="category-description" class="text-gray-600 mb-6">Enter your financial details to calculate affordability.</p>
+
+      <!-- Input Form -->
+      <form id="affordability-form" class="space-y-6">
+        <div>
+          <label for="item-price" class="block text-gray-700 font-medium">Item Price (₹)</label>
+          <input type="number" id="item-price" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter item price">
+        </div>
+        <div>
+          <label for="monthly-salary" class="block text-gray-700 font-medium">Monthly Salary (₹)</label>
+          <input type="number" id="monthly-salary" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter your salary">
+        </div>
+        <div>
+          <label for="savings" class="block text-gray-700 font-medium">Savings (₹)</label>
+          <input type="number" id="savings" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter your total savings">
+        </div>
+        <div>
+          <label for="monthly-expenses" class="block text-gray-700 font-medium">Monthly Expenses (₹)</label>
+          <input type="number" id="monthly-expenses" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter your expenses">
+        </div>
+        <div id="loan-details" class="space-y-6">
+          <div>
+            <label for="loan-tenure" class="block text-gray-700 font-medium">Loan Tenure (in Years)</label>
+            <input type="number" id="loan-tenure" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter loan tenure">
+          </div>
+          <div>
+            <label for="interest-rate" class="block text-gray-700 font-medium">Interest Rate (Annual %)</label>
+            <input type="number" id="interest-rate" class="w-full border border-gray-300 rounded-lg p-3" placeholder="Enter annual interest rate">
+          </div>
+        </div>
+        <button type="button" id="calculate-button" class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600">Check Affordability</button>
+      </form>
+
+      <!-- Result Section -->
+      <div id="result" class="mt-6 text-center text-lg font-bold hidden"></div>
+      <div id="emi-result" class="mt-4 text-center text-lg font-medium hidden"></div>
+    </section>
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="gradient-bg text-white py-4 mt-10">
+    <div class="max-w-4xl mx-auto text-center">
+      <p>&copy; 2024 Affordability Checker. All rights reserved.</p>
+      <p>Sudhanshu Srivastav</p>
+    </div>
+  </footer>
+
+  <script>
+    const categories = {
+      car: { title: "Car Affordability Checker", description: "Enter your financial details to check car affordability." },
+      house: { title: "House Affordability Checker", description: "Check if you can afford your dream house." },
+      mobile: { title: "Mobile Affordability Checker", description: "Calculate if the latest smartphone fits your budget." },
+      bike: { title: "Bike Affordability Checker", description: "See if you can buy your dream bike." },
+      computer: { title: "Computer Affordability Checker", description: "Check if you can afford a new computer." },
+      furniture: { title: "Furniture Affordability Checker", description: "Find out if your new furniture is affordable." },
+      vacation: { title: "Vacation Affordability Checker", description: "Plan your next trip wisely with our affordability tool." },
+      education: { title: "Education Affordability Checker", description: "Check if education expenses fit your budget." },
+      wedding: { title: "Wedding Affordability Checker", description: "Calculate if you can afford your dream wedding." },
+      gadget: { title: "Gadget Affordability Checker", description: "Find out if you can buy the latest gadget." }
+    };
+
+    // Update Form Based on Category Selection
+    document.getElementById("category").addEventListener("change", function () {
+      const selectedCategory = this.value;
+      const { title, description } = categories[selectedCategory];
+
+      document.getElementById("category-title").textContent = title;
+      document.getElementById("category-description").textContent = description;
+
+      const loanDetails = document.getElementById("loan-details");
+      loanDetails.style.display = selectedCategory === "mobile" || selectedCategory === "gadget" ? "none" : "block";
+    });
+
+    // Calculate Affordability
+    document.getElementById("calculate-button").addEventListener("click", function () {
+      const itemPrice = parseFloat(document.getElementById("item-price").value);
+      const monthlySalary = parseFloat(document.getElementById("monthly-salary").value);
+      const savings = parseFloat(document.getElementById("savings").value);
+      const monthlyExpenses = parseFloat(document.getElementById("monthly-expenses").value);
+      const loanTenureYears = parseFloat(document.getElementById("loan-tenure").value) || 0;
+      const annualInterestRate = parseFloat(document.getElementById("interest-rate").value) || 0;
+
+      const resultDiv = document.getElementById("result");
+      const emiResultDiv = document.getElementById("emi-result");
+
+      resultDiv.classList.remove("hidden");
+      emiResultDiv.classList.remove("hidden");
+
+      const loanAmount = itemPrice - savings;
+      const loanTenureMonths = loanTenureYears * 12;
+      const monthlyInterestRate = annualInterestRate / 12 / 100;
+      const emi = loanAmount > 0 ? (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, loanTenureMonths)) /
+                                   (Math.pow(1 + monthlyInterestRate, loanTenureMonths) - 1) : 0;
+
+      const maxAffordableEMI = monthlySalary * 0.4 - monthlyExpenses;
+
+      if (loanAmount <= 0 || emi <= maxAffordableEMI) {
+        resultDiv.textContent = "Congratulations! You can afford this.";
+        resultDiv.classList.add("text-green-500");
+        resultDiv.classList.remove("text-red-500");
+      } else {
+        resultDiv.textContent = "Sorry, you might need to save more.";
+        resultDiv.classList.add("text-red-500");
+        resultDiv.classList.remove("text-green-500");
+      }
+
+      emiResultDiv.textContent = loanAmount > 0 ? `Your estimated monthly EMI is ₹${emi.toFixed(2)}.` : "";
+    });
+  </script>
+</body>
+</html>
